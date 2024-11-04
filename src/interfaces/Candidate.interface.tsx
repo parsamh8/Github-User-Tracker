@@ -6,5 +6,5 @@ export default interface Candidate {
     readonly location: string | null,
     readonly email: string | null,
     readonly company: string | null,
-    readonly html_url: string | null,
+    readonly bio: string | null,
 }

@@ -4,60 +4,121 @@ import type Candidate from '../interfaces/Candidate.interface'
 
 const CandidateSearch = () => {
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>({
-
-    avatar_url: '',
+    avatar: '',
     name: '',
+    username: '',
     location: '',
     email: '',
     company: '',
     bio: '',
   });
 
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [candidates, setCandidates] = useState<Candidate[]>([])
+
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
 
-  const addToPotentialList = () => {
-    let parsedPotentialUser: Candidate[] = [];
-    const storedPotentalUser = localStorage.getItem('PotentialCandidate');
-    if (typeof storedPotentalUser === 'string') {
-      parsedPotentialUser = JSON.parse(storedPotentalUser);
+
+  useEffect(() => {
+
+    async function getData() {
+      const data = await searchGithub();
+      setCandidates(data);
+
+      const firstCandidateData = await searchGithubUser(data[currentIndex].login);
+
+      console.log(firstCandidateData)
+
+      setCurrentCandidate({
+        avatar: firstCandidateData.avatar_url,
+        name: firstCandidateData.name,
+        username: firstCandidateData.login,
+        location: firstCandidateData.location,
+        email: firstCandidateData.email,
+        company: firstCandidateData.company,
+        bio: firstCandidateData.bio,
+      })
     }
-    parsedPotentialUser.push(currentCandidate);
-    localStorage.setItem('PotentialCandidate', JSON.stringify(parsedPotentialUser));
-  };
 
 
-  const searchGithubByName = async (event: FormEvent, searchInput: string) => {
-    event.preventDefault();
-    const data: Candidate = await searchGithub();
+    getData();
 
-    setCurrentCandidate(data);
-  };
+  }, [])
+
+
+
+  useEffect(() => {
+    async function getUserData() {
+      const candidateData = await searchGithubUser(candidates[currentIndex].login)
+
+      setCurrentCandidate({
+        avatar: candidateData.avatar_url,
+        name: candidateData.name,
+        username: candidateData.login,
+        location: candidateData.location,
+        email: candidateData.email,
+        company: candidateData.company,
+        bio: candidateData.bio,
+      })
+    }
+
+    getUserData()
+
+  }, [currentIndex])
+
+
+
+  function saveCandidate() {
+    // load current saved array from localstorage
+    const chosenCandidates = JSON.parse(localStorage.getItem("chosenCandidates")) || [];
+
+    // push currentCandidate to the saved array
+    chosenCandidates.push(currentCandidate)
+
+    // update localstorage with the new saved array
+    localStorage.setItem("chosenCandidates", JSON.stringify(chosenCandidates))
+
+
+    // go to next candidate
+    nextCandidate();
+
+  }
+
+  function nextCandidate() {
+    // take note that candidates array only has a length of 30
+    // if you go beyond 30, theres no more candidates
+    setCurrentIndex(currentIndex + 1)
+  }
 
 
   return (
 
 
     <>
-      <section id='searchSection'>
-        <form
-          onSubmit={(event: FormEvent) =>
-            searchGithubByName(event, searchInput)
-          }
-        >
-          <input
-            type='text'
-            name=''
-            id=''
-            placeholder='Enter a Name'
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-          <button type='submit' id='searchBtn'>
-            Search
-          </button>
-        </form>
-      </section>
-{/* a card required in here */}
+
+      <div className="card">
+        <div className="card-img"
+          style={{
+            backgroundImage: `url(${currentCandidate.avatar})`
+          }}
+
+        ></div>
+
+        <h4>{currentCandidate.username}</h4>
+        <p>Location: {currentCandidate.location || "No location provided"}</p>
+        <p>Email</p>
+        <p>Company</p>
+        <p>Bio</p>
+
+
+      </div>
+
+      <div className="button-container">
+        <button onClick={nextCandidate}>Minus</button>
+        <button onClick={saveCandidate}>Plus</button>
+      </div>
+
+
     </>
 
   )
