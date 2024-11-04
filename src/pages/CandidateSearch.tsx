@@ -1,8 +1,10 @@
-import { type FormEvent, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API';
 import type Candidate from '../interfaces/Candidate.interface'
 
 const CandidateSearch = () => {
+
+  // the initial value of candidate data when the page load
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>({
     avatar: '',
     name: '',
@@ -22,6 +24,8 @@ const CandidateSearch = () => {
   useEffect(() => {
 
     async function getData() {
+
+      // await to get the data back from searchGithub function. assign to data
       const data = await searchGithub();
       setCandidates(data);
 
@@ -46,11 +50,11 @@ const CandidateSearch = () => {
   }, [])
 
 
-
+// another useEffect for switching to new user; receiving new data with increament the index
   useEffect(() => {
     async function getUserData() {
       const candidateData = await searchGithubUser(candidates[currentIndex].login)
-
+// set candidate with new data
       setCurrentCandidate({
         avatar: candidateData.avatar_url,
         name: candidateData.name,
@@ -59,6 +63,7 @@ const CandidateSearch = () => {
         email: candidateData.email,
         company: candidateData.company,
         bio: candidateData.bio,
+
       })
     }
 
@@ -67,6 +72,8 @@ const CandidateSearch = () => {
   }, [currentIndex])
 
 
+
+  
 
   function saveCandidate() {
     // load current saved array from localstorage
@@ -106,17 +113,18 @@ const CandidateSearch = () => {
 
         <h4>{currentCandidate.username}</h4>
         <p>Location: {currentCandidate.location || "No location provided"}</p>
-        <p>Email</p>
-        <p>Company</p>
-        <p>Bio</p>
+        <p>Email: {currentCandidate.email || "No email provided"}</p>
+        <p>Company: {currentCandidate.company || "No company provided"}</p>
+        <p>Bio: {currentCandidate.bio || "No bio provided"}</p>
 
 
       </div>
 
       <div className="button-container">
-        <button onClick={nextCandidate}>Minus</button>
-        <button onClick={saveCandidate}>Plus</button>
+        <button onClick={nextCandidate}>Next</button>
+        <button onClick={saveCandidate}>Save</button>
       </div>
+
 
 
     </>
