@@ -1,4 +1,4 @@
-# Github-User-Tracker
+# EdGithub-User-Tracker
   ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
 ## Description
@@ -8,7 +8,7 @@ A TypeScript and React-based talent search application that leverages GitHub's R
 
 ## Table of Contents
 
-- [Github-User-Tracker](#github-user-tracker)
+- [EdGithub-User-Tracker](#edgithub-user-tracker)
   - [Description](#description)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
