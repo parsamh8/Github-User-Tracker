@@ -21,6 +21,7 @@ A TypeScript and React-based talent search application that leverages GitHub's R
 ## Installation
 
 This application is deployed on Netlify.
+https://ed-github-tracker.netlify.app/
 
 
 ## Usage
